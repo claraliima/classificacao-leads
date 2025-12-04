@@ -1,0 +1,259 @@
+{
+  "name": "TesteDG",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "form-leads",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -208,
+        -32
+      ],
+      "id": "eb5ec7a3-69e8-4924-a548-f8aea84ab448",
+      "name": "Webhook - Ação Form",
+      "webhookId": "0415af45-6d04-4e2e-844f-e2b3005cabe7",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a46b039c-a085-461f-b861-425e47f2230a",
+              "name": "nome",
+              "value": "={{ $json.body.nome }}",
+              "type": "string"
+            },
+            {
+              "id": "3ccc1a0f-15bf-4d0b-ae3d-a4cb9a70db80",
+              "name": "email",
+              "value": "={{ $json.body.email }}",
+              "type": "string"
+            },
+            {
+              "id": "e913ff4c-3368-4aa5-ab60-a2de104dd139",
+              "name": "mensagem",
+              "value": "={{ $json.body.mensagem }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        16,
+        -32
+      ],
+      "id": "4ee5e78b-6400-4991-b79a-d4fc9210a6b9",
+      "name": "Recebendo dados"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "Você é um classificador de leads.\n\nSua função é analisar a mensagem recebida e responder APENAS com uma das categorias abaixo:\n\n- \"Marketing\"\n- \"Comercial\"\n- \"Dúvida Geral\"\n\nRegras de classificação:\n1. Classifique como **Marketing** quando a mensagem estiver relacionada a:\n   - pedido de conteúdos (e-books, vídeos, posts, materiais explicativos);\n   - busca por informações educativas ou informativas;\n   - interesse em aprender sobre o tema sem intenção direta de contratação.\n\n2. Classifique como **Comercial** quando a mensagem indicar:\n   - intenção de contratar, comprar ou solicitar proposta;\n   - dúvidas sobre preços, planos, condições, onboarding;\n   - solicitação de contato comercial.\n\n3. Classifique como **Dúvida Geral** quando a mensagem tratar de:\n   - perguntas sobre funcionamento do serviço/produto;\n   - dúvidas técnicas, operacionais ou explicações gerais;\n   - qualquer pergunta que não se enquadre claramente nas categorias acima.\n\nInstruções:\n- Não explique.\n- Não escreva frases.\n- Responda apenas com o nome da categoria.\n"
+            },
+            {
+              "content": "=Mensagem:  {{ $json.mensagem }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2,
+      "position": [
+        240,
+        -32
+      ],
+      "id": "624cfc05-f2e5-4a77-855c-3dac56d9a616",
+      "name": "OpenAI - Classificando",
+      "credentials": {
+        "openAiApi": {
+          "id": "FOLVVpJ0ydd0yANs",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1aSsH2qpc_N0IwWUklx3uBh-wm5kLcdeZNLb-PGxjnyo",
+          "mode": "list",
+          "cachedResultName": "Teste DG",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aSsH2qpc_N0IwWUklx3uBh-wm5kLcdeZNLb-PGxjnyo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aSsH2qpc_N0IwWUklx3uBh-wm5kLcdeZNLb-PGxjnyo/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Tipo Lead": "={{ $json.output[0].content[0].text }}",
+            "Nome": "={{ $('Recebendo dados').item.json.nome }}",
+            "Email": "={{ $('Recebendo dados').item.json.email }}",
+            "Mensagem": "={{ $('Recebendo dados').item.json.mensagem }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tipo Lead",
+              "displayName": "Tipo Lead",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Mensagem",
+              "displayName": "Mensagem",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        592,
+        -32
+      ],
+      "id": "195db85b-5469-4a27-ae59-d8afda3f514b",
+      "name": "Atualizando planilha",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "aaWwi0B68Ohh0EW1",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "<!DOCTYPE html>\n<html lang=\"pt-BR\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Mensagem enviada</title>\n    <style>\n        body {\n            font-family: Arial, sans-serif;\n            background: #f4f4f4;\n            margin: 0;\n            padding: 0;\n            display: flex;\n            justify-content: center;\n            align-items: center;\n            height: 100vh;\n        }\n\n        .card {\n            background: white;\n            padding: 30px;\n            border-radius: 12px;\n            box-shadow: 0 4px 16px rgba(0,0,0,0.1);\n            text-align: center;\n            max-width: 400px;\n        }\n\n        h2 {\n            color: #2b7a4b;\n            margin-bottom: 10px;\n        }\n\n        p {\n            color: #555;\n            margin-bottom: 20px;\n        }\n\n        a {\n            display: inline-block;\n            padding: 10px 20px;\n            background: #2b7a4b;\n            color: white;\n            text-decoration: none;\n            border-radius: 8px;\n            transition: 0.2s;\n        }\n\n        a:hover {\n            background: #23633c;\n        }\n    </style>\n</head>\n<body>\n    <div class=\"card\">\n        <h2>Mensagem enviada! ✓</h2>\n        <p>Obrigado pelo contato. Sua mensagem foi registrada com sucesso.</p>\n\n        <a href=\"/\">Voltar</a>\n    </div>\n</body>\n</html>\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        816,
+        -32
+      ],
+      "id": "003a2c17-90f0-4016-b141-f19ca04c3ae6",
+      "name": "Resposta ao envio form "
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook - Ação Form": {
+      "main": [
+        [
+          {
+            "node": "Recebendo dados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recebendo dados": {
+      "main": [
+        [
+          {
+            "node": "OpenAI - Classificando",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI - Classificando": {
+      "main": [
+        [
+          {
+            "node": "Atualizando planilha",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualizando planilha": {
+      "main": [
+        [
+          {
+            "node": "Resposta ao envio form ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false,
+    "saveDataSuccessExecution": "all",
+    "saveExecutionProgress": true,
+    "saveManualExecutions": true,
+    "saveDataErrorExecution": "all"
+  },
+  "versionId": "044b798a-f6a0-4993-9773-a9c81fb2a772",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "92f1eaf6aefd23794bef5dd3577092075d2befd4e9196f0475ce5db75ead57b6"
+  },
+  "id": "XIp8TmmkF9CxviMU",
+  "tags": []
+}
